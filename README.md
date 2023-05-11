@@ -15,12 +15,12 @@ It also requires a database named ```sales``` to be created on localhost.
 ## Using the project
 * The project can be run by executing the following command:
 ```
-python3 main.py
+py .\main.py
 ```
 * Instructions for using the project will be displayed on the console, and the user will be prompted.
 
 ## Authors
-* **Matthew DeStefano** - *
+* [**Matthew DeStefano**] (https://github.com/mattdestefano)
 
 ## License
 [MIT] (https://choosealicense.com/licenses/mit/)
