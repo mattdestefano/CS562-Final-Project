@@ -27,12 +27,11 @@ def dbInit(db):
 def createQuery(S, n, V, F, sigma, G):
     print("Generating query...")
     with open('generated.py', "w") as generated:
-        generated.write("import psycopg2\n#from prettytable import PrettyTable\n\n")
-        generated.write(f"""S = "{S}"\nn = "{n}"\nV = "{V}"\nF = "{F}"\nsigma = "{sigma}"\nG = "{G}"\n\n""")
-        generated.write("MF_Struct = {}\n")
-        generated.write("""db = psycopg2.connect(user = "postgres",password = "password",host = "127.0.0.1",port = "5432",database = "sales")\n""")
-        generated.write("cursor = db.cursor()\n\n")
-        generated.write("query = cursor.prepare('SELECT * FROM sales;')\n")
+        pre = open("prefix.py", "r")
+        for line in pre:
+            generated.write(line)
+        pre.close()
+        generated.write(f"""S = "{S}"\nn = "{n}"\nV = "{V}"\nF = "{F}"\nsigma = "{sigma}"\nG = "{G}"\n""")
         queryType = "mf"
         for x in sigma.split(","):
             for y in x.split(" "):
@@ -48,8 +47,8 @@ def createQuery(S, n, V, F, sigma, G):
             generated.write(line)
         queryTypeFile.close()
         generated.close()
-
-    print(f"Generated query in {os.getcwd()}\\generated.py\n")
+    print(f"Generated query ({queryType}) in {os.getcwd()}\\generated.py\n")
+    print("Run script using 'py .\generated.py'.")
 
 def enterInline():
     S = input("Enter the SELECT attribute(s): ")
@@ -67,13 +66,13 @@ def enterFile():
     elif filename == "ls":
         print("Available files: ")
         for file in os.listdir("./Queries"):
-            if(file.endswith(".sql")):
+            if(file.endswith(".txt")):
                 print(file)
         enterFile()
     else:
         try:
             file = open("./Queries/" + filename, "r")
-            lines = [x.rstrip for x in file.readlines()]
+            lines = [x.rstrip() for x in file.readlines()]
             S = ""
             n = ""
             V = ""
@@ -83,6 +82,7 @@ def enterFile():
             x = 0
             while x < len(lines):
                 if lines[x] == "SELECT ATTRIBUTE(S):":
+                    print(lines[x])
                     S = lines[x+1].replace(" ", "") 
                     x += 2
                 elif lines[x] == "NUMBER OF GROUPING VARIABLES(n):":
@@ -95,13 +95,13 @@ def enterFile():
                     F = lines[x+1].replace(" ", "")
                     x += 2
                 elif lines[x] == "SELECT CONDITION-VECT([sigma]):":
-                    sigma = lines[x+1].replace(" ", "")
+                    sigma = lines[x+1].replace(" ", "").replace('"','\\"')
                     x += 2
                 elif lines[x] == "HAVING_CONDITION(G):":
                     G = lines[x+1]
                     x += 2
                 else:
-                    sigma =+ f",{lines[x]}"
+                    sigma += f",{lines[x]}".replace('"','\\"')
                     x += 1
             S = S.replace(" ", "")
             n = n.replace(" ", "")
@@ -109,7 +109,7 @@ def enterFile():
             F = F.replace(" ", "")
             createQuery(S, n, V, F, sigma, G)
         except:
-            print("Error: File not found.")
+            print("Error Reading File. Check that file exists and was typed properly.")
             enterFile()
 
 def displayMenu():

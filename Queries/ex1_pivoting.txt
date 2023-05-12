@@ -1,0 +1,14 @@
+SELECT ATTRIBUTE(S):
+cust,avg_x,avg_y,avg_z
+NUMBER OF GROUPING VARIABLES(n):
+3
+GROUPING ATTRIBUTES(V):
+cust
+F-VECT([F]):
+x_avg_sale,y_avg_sale,z_avg_sale
+SELECT CONDITION-VECT([sigma]):
+x.state="NY"
+y.state="CT"
+z.state="NJ"
+HAVING_CONDITION(G):
+avg_x>avg_y and avg_x>avg_z
