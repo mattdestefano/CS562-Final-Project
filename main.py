@@ -82,7 +82,6 @@ def enterFile():
             x = 0
             while x < len(lines):
                 if lines[x] == "SELECT ATTRIBUTE(S):":
-                    print(lines[x])
                     S = lines[x+1].replace(" ", "") 
                     x += 2
                 elif lines[x] == "NUMBER OF GROUPING VARIABLES(n):":
@@ -109,7 +108,7 @@ def enterFile():
             F = F.replace(" ", "")
             createQuery(S, n, V, F, sigma, G)
         except:
-            print("Error Reading File. Check that file exists and was typed properly.")
+            print("Error Reading File. Check that file exists and is formatted correctly.")
             enterFile()
 
 def displayMenu():

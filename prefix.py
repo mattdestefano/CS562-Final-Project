@@ -32,6 +32,7 @@ dbInit(cursor)
 print("Done.\n")
 
 query = cursor.execute('SELECT * FROM sales;')
-print(query)
+salesTable = cursor.fetchall()
+
 
 # Phi Operators:

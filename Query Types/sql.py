@@ -1,4 +1,4 @@
-for row in query:
+for row in salesTable:
 	key = '' #key to store into the MF Struct
 	value = {} #value that will store the columns of the MF Struct for the given row
 	for attr in V.split(','): #create key out of the grouping attributes of the current row in the table

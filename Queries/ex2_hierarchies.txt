@@ -1,6 +1,13 @@
-select prod, month, sum(x.sale)/sum(y.sale)
-from Sales
-where year=1997
-group by prod,month ; x,y
-such that x.prod = prod and x.month = month,
+SELECT ATTRIBUTE(S):
+prod, month, x_sum_sale/y_sum_sale
+NUMBER OF GROUPING VARIABLES(n):
+2
+GROUPING ATTRIBUTES(V):
+prod, month
+F-VECT([F]):
+x_sum_sale, y_sum_sale
+SELECT CONDITION-VECT([sigma]):
+year=1997
+x.prod = prod
+x.month = month
 y.prod = prod

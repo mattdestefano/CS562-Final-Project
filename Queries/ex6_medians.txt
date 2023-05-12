@@ -1,6 +1,12 @@
-select prod, sale
-from Sales
-group by prod, sale ; x, y
-such that x.prod=prod
-y.prod=prod and y.sale < sale
-having count(y.prod) = count(x.prod) / 2
+SELECT ATTRIBUTE(S):
+prod, sale
+NUMBER OF GROUPING VARIABLES(n):
+2
+GROUPING ATTRIBUTES(V):
+prod, sale
+SELECT CONDITION-VECT([sigma]):
+x.prod = prod
+y.prod=prod
+y.sale < sale
+HAVING CONDITION(G):
+y_count_prod = x_count_prod / 2

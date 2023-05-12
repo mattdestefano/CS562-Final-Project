@@ -1,5 +1,13 @@
-select cust, prod, avg(x.sale), avg(y.sale)
-from Sales
-group by cust, prod ; x, y
-such that x.cust=cust and x.prod=prod,
-y.cust<>cust and y.prod=prod
+SELECT ATTRIBUTE(S):
+cust, prod, x_avg_sale, y_avg_sale
+NUMBER OF GROUPING VARIABLES(n):
+2
+GROUPING ATTRIBUTES(V):
+cust, prod
+F-VECT([F]):
+x_avg_sale, y_avg_sale
+SELECT CONDITION-VECT([sigma]):
+x.cust = cust
+x.prod = prod
+y.cust <> cust
+y.prod = prod

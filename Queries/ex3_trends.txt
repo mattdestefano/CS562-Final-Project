@@ -1,6 +1,14 @@
-select cust,month,avg(x.sale),avg(sale),avg(y.sale)
-from Sales
-where year=1997
-group by cust, month ; x, y
-such that x.cust=cust and x.month < month,
-y.cust=cust and y.month > month
+SELECT ATTRIBUTE(S):
+cust, month, x_avg_sale, avg_sale, y_avg_sale
+NUMBER OF GROUPING VARIABLES(n):
+2
+GROUPING ATTRIBUTES(V):
+cust, month
+F-VECT([F]):
+x_avg_sale, avg_sale, y_avg_sale
+SELECT CONDITION-VECT([sigma]):
+year=1997
+x.cust = cust
+x.month < month
+y.cust = cust
+y.month > month

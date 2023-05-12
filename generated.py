@@ -32,142 +32,60 @@ dbInit(cursor)
 print("Done.\n")
 
 query = cursor.execute('SELECT * FROM sales;')
-print(query)
+salesTable = cursor.fetchall()
+
 
 # Phi Operators:
-S = "cust,avg_x,avg_y,avg_z"
-n = "3"
-V = "cust"
-F = "x_avg_sale,y_avg_sale,z_avg_sale"
-sigma = "x.state=\"NY\",y.state=\"CT\",z.state=\"NJ\""
-G = "avg_x>avg_y and avg_x>avg_z"
+S = "cust,prod,avg_quant,max_quant"
+n = "0"
+V = "cust,prod"
+F = "avg_quant,max_quant,min_quant,count_quant"
+sigma = ""
+G = ""
 
 
-# Query Type Detected: mf
+# Query Type Detected: sql
 
-sigma = sigma.split(',')
-pList = []
-#splits predicates by each predicate statment and creates list to store the parts of each predicate in a single 2D array
-for i in sigma:
-	pList.append(i.split(' '))
-for i in range(int(n)+1): # loop through the table to evaluate each grouping variable
-    # 0th pass of the algorithm, where each row of the MF Struct is initalized for every unique group based on the grouping variables.
-    # Each row in the MF struct also has its columns initalized appropriately based on the aggregates in the F-Vect
-	if i == 0:
-		for row in query:
-			key = ''
-			value = {}
-			for attr in V.split(','):
-				key += f'{str(row[attr])},'
-			key = key[:-1]
-			if key not in MF_Struct.keys():
-				for groupAttr in V.split(','):
-					colVal = row[groupAttr]
-					if colVal:
-						value[groupAttr] = colVal
-				for fVectAttr in F.split(','):
-					if (fVectAttr.split('_')[1] == 'avg'):
-                        # Average is saved as an object with the sum, count, and overall average
-						value[fVectAttr] = {'sum':0, 'count':0, 'avg':0}
-					elif (fVectAttr.split('_')[1] == 'min'):
-                        # Min is initialized as 4994, which is the largest value of 'quant' in the sales table.
-                        # This allows the first value that the algorithm comes across will be saved as the min (except the row with quant=4994)
-						value[fVectAttr] = 4994 # Max quant in sales table
-					else:
-                        # Initalize values of count, sum and max to 0
-						value[fVectAttr] = 0
-				MF_Struct[key] = value #add row into MF Struct
-	else: #The other n passes for each grouping variable 
-			for aggregate in F.split(','):
-				aggList = aggregate.split('_')
-				groupVar = aggList[0]
-				aggFunc = aggList[1]
-				aggCol = aggList[2]
-                # Check to make sure the aggregate function is being called on the grouping variable you are currently on (i)
-				if i == int(groupVar):
-					for row in query:
-						key = ''
-						for attr in V.split(','):
-							key += f'{str(row[attr])},'
-						key = key[:-1]
-						if aggFunc == 'sum':
-                            # Creates a string to be run with the eval() method by replacing grouping variables with their actual values
-							evalString = sigma[i-1]
-							for string in pList[i-1]:
-								if len(string.split('.')) > 1 and string.split('.')[0] == str(i):
-									rowVal = row[string.split('.')[1]]
-									try:
-										int(rowVal)
-										evalString = evalString.replace(string, str(rowVal))
-									except:
-										evalString = evalString.replace(string, f"'{rowVal}'")
-                            # If evalString is true, update the sum
-							if eval(evalString.replace('=', '==')):
-								sum = int(row[aggCol])
-								MF_Struct[key][aggregate] += sum
-						elif aggFunc == 'avg':
-							sum = MF_Struct[key][aggregate]['sum']
-							count = MF_Struct[key][aggregate]['count']
-							evalString = sigma[i-1]
-							for string in pList[i-1]:
-								if len(string.split('.')) > 1 and string.split('.')[0] == str(i):
-									rowVal = row[string.split('.')[1]]
-									try:
-										int(rowVal)
-										evalString = evalString.replace(string, str(rowVal))
-									except:
-										evalString = evalString.replace(string, f"'{rowVal}'")
-                            # If evalString is true and count isn't 0, update the avg
-							if eval(evalString.replace('=', '==')):
-								sum += int(row[aggCol])
-								count += 1
-								if count != 0:
-									MF_Struct[key][aggregate] = {'sum': sum, 'count': count, 'avg': (sum/count)}
-						elif aggFunc == 'min':
-							# check if row meets predicate requirements
-							evalString = sigma[i-1]
-							for string in pList[i-1]:
-								if len(string.split('.')) > 1 and string.split('.')[0] == str(i):
-									rowVal = row[string.split('.')[1]]
-									try:
-										int(rowVal)
-										evalString = evalString.replace(string, str(rowVal))
-									except:
-										evalString = evalString.replace(string, f"'{rowVal}'")
-                            # If evalString is true, update the min
-							if eval(evalString.replace('=', '==')):
-								min = int(MF_Struct[key][aggregate])
-								if int(row[aggCol]) < min:
-									MF_Struct[key][aggregate] = row[aggCol]
-						elif aggFunc == 'max':
-							# check if row meets predicate requirements
-							evalString = sigma[i-1]
-							for string in pList[i-1]:
-								if len(string.split('.')) > 1 and string.split('.')[0] == str(i):
-									rowVal = row[string.split('.')[1]]
-									try:
-										int(rowVal)
-										evalString = evalString.replace(string, str(rowVal))
-									except:
-										evalString = evalString.replace(string, f"'{rowVal}'")
-                            # If evalString is true, update the max
-							if eval(evalString.replace('=', '==')):
-								max = int(MF_Struct[key][aggregate])
-								if int(row[aggCol]) > max:
-									MF_Struct[key][aggregate] = row[aggCol]
-						elif aggFunc == 'count':
-							# check if row meets predicate requirements
-							evalString = sigma[i-1]
-							for string in pList[i-1]:
-								if len(string.split('.')) > 1 and string.split('.')[0] == str(i):
-									rowVal = row[string.split('.')[1]]
-									try:
-										int(rowVal)
-										evalString = evalString.replace(string, str(rowVal))
-									except:
-										evalString = evalString.replace(string, f"'{rowVal}'")
-							if eval(evalString.replace('=', '==')): # If evalString is true, increment the count
-								MF_Struct[key][aggregate] += 1
+for row in salesTable:
+	key = '' #key to store into the MF Struct
+	value = {} #value that will store the columns of the MF Struct for the given row
+	for attr in V.split(','): #create key out of the grouping attributes of the current row in the table
+		key += f'{str(row[attr])},'
+	key = key[:-1] #remove trailing comma
+	if key not in MF_Struct.keys(): #if the key is not in the MF Struct, create a new entry for the MF Struct
+		for groupAttr in V.split(','):
+			colVal = row[groupAttr]
+			if colVal:
+				value[groupAttr] = colVal
+		#loop through the fVects and initalize the values for each aggreagte function being calculated
+	    #initalize count to 1, sum to the current row's quant value, min and max to the current row's quant value, and average to a dictionary with 3 componenets
+		for fVectAttr in F.split(','):
+			tableCol = fVectAttr.split('_')[1]
+			if (fVectAttr.split('_')[0] == 'avg'): 
+				#average is stored as a dictionary tracking, sum, count, and average. Each is calculated and stored when the row is updated
+				value[fVectAttr] = {'sum': row[tableCol], 'count': 1, 'avg': row[tableCol]}
+			elif (fVectAttr.split('_')[0] == 'count'):
+				value[fVectAttr] = 1
+			else:
+				value[fVectAttr] = row[tableCol]
+		MF_Struct[key] = value #insert new row into the MFStruct
+	else: #row in table already corresponds to an existing entry in the MF Struct, update the existing entry
+		for fVectAttr in F.split(','):
+			tableCol = fVectAttr.split('_')[1]
+			if (fVectAttr.split('_')[0] == 'sum'):
+				MF_Struct[key][fVectAttr] += int(row[tableCol]) #Add the quant to the sum for the corresponding row in the MF Struct
+			elif (fVectAttr.split('_')[0] == 'avg'):
+				newSum = MF_Struct[key][fVectAttr]['sum'] + int(row[tableCol])
+				newCount = MF_Struct[key][fVectAttr]['count'] + 1
+				MF_Struct[key][fVectAttr] = {'sum': newSum, 'count': newCount, 'avg': newSum / newCount}
+			elif (fVectAttr.split('_')[0] == 'count'):
+				MF_Struct[key][fVectAttr] += 1
+			elif (fVectAttr.split('_')[0] == 'min'): #check if the row's quant is a new min compared to the corresponding row of the MFStruct
+				if row[tableCol] < MF_Struct[key][fVectAttr]:
+					MF_Struct[key][fVectAttr] = int(row[tableCol])
+			else: #check if the row's quant is a new max compared to the corresponding row of the MFStruct
+				if row[tableCol] > MF_Struct[key][fVectAttr]:
+					MF_Struct[key][fVectAttr] = int(row[tableCol])
 #Generate output table(also checks the HAVING condition)
 output = PrettyTable()
 output.field_names = S.split(',')
@@ -183,7 +101,7 @@ for row in MF_Struct:
 					int(string)
 					evalString += string
 				except:
-					if len(string.split('_')) > 1 and string.split('_')[1] == 'avg':
+					if len(string.split('_')) > 1 and string.split('_')[0] == 'avg':
 						evalString += str(MF_Struct[row][string]['avg'])
 					else:
 						evalString += str(MF_Struct[row][string])
@@ -192,7 +110,7 @@ for row in MF_Struct:
 		if eval(evalString.replace('=', '==')):
 			row_info = []
 			for val in S.split(','):
-				if len(val.split('_')) > 1 and val.split('_')[1] == 'avg':
+				if len(val.split('_')) > 1 and val.split('_')[0] == 'avg':
 					row_info += [str(MF_Struct[row][val]['avg'])]
 				else:
 					row_info += [str(MF_Struct[row][val])]
@@ -202,9 +120,9 @@ for row in MF_Struct:
         #there is no having condition, thus every MFStruct row will be in the output table
 		row_info = []
 		for val in S.split(','):
-			if len(val.split('_')) > 1 and val.split('_')[1] == 'avg':
+			if len(val.split('_')) > 1 and val.split('_')[0] == 'avg':
 				row_info += [str(MF_Struct[row][val]['avg'])]
 			else:
 				row_info += [str(MF_Struct[row][val])]
 		output.add_row(row_info)
-print(output) #Pretty table corresponding to evaluation of query
+print(output)

@@ -7,7 +7,7 @@ for i in range(int(n)+1): # loop through the table to evaluate each grouping var
     # 0th pass of the algorithm, where each row of the MF Struct is initalized for every unique group based on the grouping variables.
     # Each row in the MF struct also has its columns initalized appropriately based on the aggregates in the F-Vect
 	if i == 0:
-		for row in query:
+		for row in salesTable:
 			key = ''
 			value = {}
 			for attr in V.split(','):

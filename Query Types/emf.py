@@ -6,7 +6,7 @@ for i in range(int(n)+1):
     # 0th pass of the algorithm, where each row of the MF Struct is initalized for every unique group based on the grouping variables.
     # Each row in the MF struct also has its columns initalized appropriately based on the aggregates in the F-Vect
 	if i == 0:
-		for row in query:
+		for row in salesTable:
 			key = ''
 			value = {}
 			for attr in V.split(','):
@@ -37,7 +37,7 @@ for i in range(int(n)+1):
             # Check to make sure the aggregate function is being called on the grouping variable you are currently on (i)
             # Also loop through every key in the MF_Struct to update every row of the MF_Struct the predicate statments apply to(1.state = state and 1.cust = cust vs 1.state = state)
 			if i == int(groupVar):
-				for row in query:
+				for row in salesTable:
 					for key in MF_Struct.keys():
 						if aggFunc == 'sum':
 							evalString = sigma[i-1]
