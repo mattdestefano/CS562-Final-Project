@@ -20,7 +20,7 @@ py .\main.py
 * Instructions for using the project will be displayed on the console, and the user will be prompted.
 
 ## Authors
-* [**Matthew DeStefano**] (https://github.com/mattdestefano)
+* [**Matthew DeStefano**](https://github.com/mattdestefano)
 
 ## License
-[MIT] (https://choosealicense.com/licenses/mit/)
+[MIT](https://choosealicense.com/licenses/mit/)

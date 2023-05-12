@@ -25,7 +25,40 @@ def dbInit(db):
     init.close()
 
 def createQuery(S, n, V, F, sigma, G):
-    pass # TODO: Generate the query file
+    print("Generating query...")
+    with open('generated.py', "w") as generated:
+        generated.write("import psycopg2\n#from prettytable import PrettyTable\n\n")
+        generated.write(f"""S = "{S}"\nn = "{n}"\nV = "{V}"\nF = "{F}"\nsigma = "{sigma}"\nG = "{G}"\n\n""")
+        generated.write("MF_Struct = {}\n")
+        generated.write("""db = psycopg2.connect(user = "postgres",password = "password",host = "127.0.0.1",port = "5432",database = "sales")\n""")
+        generated.write("cursor = db.cursor()\n\n")
+        generated.write("query = cursor.prepare('SELECT * FROM sales;')\n")
+        queryType = "mf"
+        for x in sigma.split(","):
+            for y in x.split(" "):
+                if y in V.split(","):
+                    queryType = "emf"
+        if(n == "0"):
+            queryType = "sql"
+        generated.close()
+        generated = open("generated.py", "a")
+        generated.write(f"\n\n# Query Type Detected: {queryType}\n\n")
+        queryTypeFile = open(f"./Query Types/{queryType}.py", "r")
+        for line in queryTypeFile:
+            generated.write(line)
+        queryTypeFile.close()
+        generated.close()
+
+    print(f"Generated query in {os.getcwd()}\\generated.py\n")
+
+def enterInline():
+    S = input("Enter the SELECT attribute(s): ")
+    n = input("Enter the number of grouping variables: ")
+    V = input("Enter the grouping attribute(s): ")
+    F = input("Enter the F-Vector: ")
+    sigma = input("Enter the sigma condition(s): ")
+    G = input("Enter the having condition(s): ")
+    createQuery(S, n, V, F, sigma, G)
 
 def enterFile():
     filename = input("Enter the filename, type ls for options, or type exit to exit: ")
@@ -92,7 +125,8 @@ def promptUser():
     choice = input("Enter your choice: ")
     if choice == "1":
         # Inline SQL
-        pass
+        enterInline()
+        return
     elif choice == "2":
         # Read from file
         enterFile()
