@@ -21,6 +21,8 @@ def dbInit(db):
         db.execute(line)
     init.close()
 
+columns = ["cust", "prod", "day", "month", "year", "state", "quant", "date"]
+
 # Connect to the database
 print("Connecting to database...")
 cursor, db = dbConnect()

@@ -11,10 +11,12 @@ for i in range(int(n)+1): # loop through the table to evaluate each grouping var
 			key = ''
 			value = {}
 			for attr in V.split(','):
+				attr = columns.index(attr)
 				key += f'{str(row[attr])},'
 			key = key[:-1]
 			if key not in MF_Struct.keys():
 				for groupAttr in V.split(','):
+					groupAttr = columns.index(groupAttr)
 					colVal = row[groupAttr]
 					if colVal:
 						value[groupAttr] = colVal
