@@ -38,6 +38,7 @@ for i in range(int(n)+1):
 			aggCol = aggList[2]
             # Check to make sure the aggregate function is being called on the grouping variable you are currently on (i)
             # Also loop through every key in the MF_Struct to update every row of the MF_Struct the predicate statments apply to(1.state = state and 1.cust = cust vs 1.state = state)
+			groupVar = {"x": "1", "y": "2", "z": "3"}[groupVar]
 			if i == int(groupVar):
 				for row in salesTable:
 					for key in MF_Struct.keys():

@@ -5,7 +5,7 @@ NUMBER OF GROUPING VARIABLES(n):
 GROUPING ATTRIBUTES(V):
 prod, month
 F-VECT([F]):
-z_count
+z_count_sale
 SELECT CONDITION-VECT([sigma]):
 x.prod = prod
 x.month = x.month-1

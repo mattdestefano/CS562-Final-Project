@@ -38,7 +38,7 @@ salesTable = cursor.fetchall()
 
 
 # Phi Operators:
-S = "cust,prod,avg_quant,max_quant"
+S = "cust,state,avg_quant,max_quant"
 n = "0"
 V = "cust,prod"
 F = "avg_quant,max_quant,min_quant,count_quant"
