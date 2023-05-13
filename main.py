@@ -34,9 +34,9 @@ def createQuery(S, n, V, F, sigma, G):
         generated.write(f"""S = "{S}"\nn = "{n}"\nV = "{V}"\nF = "{F}"\nsigma = "{sigma}"\nG = "{G}"\n""")
         queryType = "mf"
         for x in sigma.split(","):
-            for y in x.split(" "):
-                if y in V.split(","):
-                    queryType = "emf"
+            # if string x contains < > + or - then it is an emf
+            if "<" in x or ">" in x or "+" in x or "-" in x:
+                queryType = "emf"
         if(n == "0"):
             queryType = "sql"
         generated.close()

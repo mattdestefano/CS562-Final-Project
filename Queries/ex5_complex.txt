@@ -1,11 +1,11 @@
 SELECT ATTRIBUTE(S):
-cust, prod, x_avg_sale, y_avg_sale
+cust, prod, x_count_sale, y_count_sale
 NUMBER OF GROUPING VARIABLES(n):
 2
 GROUPING ATTRIBUTES(V):
 cust, prod
 F-VECT([F]):
-x_avg_sale, y_avg_sale
+x_count_sale, y_count_sale
 SELECT CONDITION-VECT([sigma]):
 x.cust = cust
 x.prod = prod
